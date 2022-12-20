@@ -2,9 +2,10 @@ use std::collections::HashMap;
 
 use rand::{rngs::ThreadRng, seq::SliceRandom};
 
-pub fn simulate(iterations: usize, mut num_of_dice: usize) -> HashMap<i32, i32> {
+pub fn simulate(iterations: usize, num_of_dice: usize) -> HashMap<i32, i32> {
     let mut map: HashMap<i32, i32> = HashMap::new();
     for _ in 0..iterations {
+        let mut num_of_dice = num_of_dice;
         let mut answer = 0;
         while num_of_dice > 0 {
             let rng = rand::thread_rng();
