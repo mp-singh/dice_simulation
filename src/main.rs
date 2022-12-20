@@ -1,6 +1,6 @@
 use std::time::Instant;
-
 use dice_simulation::simulate;
+
 fn main() {
     let num_of_dice = 5;
     let iterations = 1_000_000;
