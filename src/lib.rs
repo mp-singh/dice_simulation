@@ -1,6 +1,6 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, vec};
 
-use rand::{rngs::ThreadRng, seq::SliceRandom};
+use rand::{rngs::ThreadRng, seq::SliceRandom, Rng};
 
 pub fn simulate(iterations: usize, num_of_dice: usize) -> HashMap<i32, i32> {
     let mut map: HashMap<i32, i32> = HashMap::new();
@@ -18,6 +18,23 @@ pub fn simulate(iterations: usize, num_of_dice: usize) -> HashMap<i32, i32> {
     map
 }
 
+fn roll_dice(n: usize, mut rng: ThreadRng) -> Vec<i32> {
+    let mut roll = Vec::with_capacity(n);
+    for _ in 0..n {
+        roll.push(rng.gen_range(1..=6));
+    }
+    roll
+}
+
+fn score(roll: &mut Vec<i32>) -> i32 {
+    if roll.contains(&3) {
+        roll.retain(|&x| x != 3);
+        return 0;
+    }
+    roll.sort();
+    roll.remove(0)
+}
+
 pub fn pretty_print(map: &HashMap<i32, i32>, iterations: usize) {
     let mut keys: Vec<_> = map.keys().collect();
     keys.sort();
@@ -29,23 +46,6 @@ pub fn pretty_print(map: &HashMap<i32, i32>, iterations: usize) {
             map[k]
         );
     }
-}
-
-fn roll_dice(n: usize, mut rng: ThreadRng) -> Vec<i32> {
-    let roll = [1, 2, 3, 4, 5, 6]
-        .choose_multiple(&mut rng, n)
-        .cloned()
-        .collect::<Vec<_>>();
-    roll
-}
-
-fn score(roll: &mut Vec<i32>) -> i32 {
-    if roll.contains(&3) {
-        roll.retain(|&x| x != 3);
-        return 0;
-    }
-    roll.sort();
-    roll.remove(0)
 }
 
 #[cfg(test)]
