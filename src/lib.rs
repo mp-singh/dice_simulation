@@ -1,6 +1,6 @@
-use std::{collections::HashMap, vec};
+use std::collections::HashMap;
 
-use rand::{rngs::ThreadRng, seq::SliceRandom, Rng};
+use rand::{rngs::ThreadRng, Rng};
 
 pub fn simulate(iterations: usize, num_of_dice: usize) -> HashMap<i32, i32> {
     let mut map: HashMap<i32, i32> = HashMap::new();
