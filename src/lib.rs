@@ -8,11 +8,11 @@ pub fn simulate(iterations: usize, num_of_dice: usize) -> HashMap<i32, i32> {
         let mut num_of_dice = num_of_dice;
         let mut answer = 0;
         while num_of_dice > 0 {
-            let rng = rand::thread_rng();
-            let mut roll = roll_dice(num_of_dice, rng);
-            answer += score(&mut roll);
+            let roll = roll_dice(num_of_dice, rand::thread_rng());
+            let (ans, len) = score(roll);
+            answer += ans;
             map.entry(answer).and_modify(|e| *e += 1).or_insert(1);
-            num_of_dice = roll.len();
+            num_of_dice = len
         }
     }
     map
@@ -26,13 +26,12 @@ fn roll_dice(n: usize, mut rng: ThreadRng) -> Vec<i32> {
     roll
 }
 
-fn score(roll: &mut Vec<i32>) -> i32 {
+fn score(mut roll: Vec<i32>) -> (i32, usize) {
     if roll.contains(&3) {
-        roll.retain(|&x| x != 3);
-        return 0;
+        return (0, roll.iter().filter(|&x| x != &3).count());
     }
     roll.sort();
-    roll.remove(0)
+    (*roll.first().unwrap(), roll.len() - 1)
 }
 
 pub fn pretty_print(map: &HashMap<i32, i32>, iterations: usize) {
@@ -59,19 +58,22 @@ mod test {
     }
     #[test]
     fn test_score() {
-        let mut roll = vec![1, 2, 3, 4, 5];
-        assert_eq!(score(&mut roll), 0);
-        assert_eq!(roll, vec![1, 2, 4, 5]);
+        let roll = vec![1, 2, 3, 4, 5];
+        assert_eq!(score(roll), (0, 4));
     }
     #[test]
     fn test_score_more_than_one_three() {
-        let mut roll = vec![1, 2, 3, 3, 4];
-        assert_eq!(score(&mut roll), 0);
-        assert_eq!(roll, vec![1, 2, 4]);
+        let roll = vec![1, 2, 3, 3, 4];
+        assert_eq!(score(roll), (0, 3));
     }
     #[test]
     fn test_score_example() {
-        let mut roll = vec![3, 1, 3, 6, 6];
-        assert_eq!(score(&mut roll), 0);
+        let roll = vec![3, 1, 3, 6, 6];
+        assert_eq!(score(roll), (0, 3));
+    }
+    #[test]
+    fn test_score_example_all_3() {
+        let roll = vec![3, 3, 3, 3, 3];
+        assert_eq!(score(roll), (0, 0));
     }
 }
